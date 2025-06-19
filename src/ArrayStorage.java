@@ -4,25 +4,19 @@ import java.util.Objects;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private final Resume[] storage = new Resume[10000];
+    private int size;
 
     void clear() {
-        for (int i = 0; i < storage.length; i++) {
-            if (Objects.nonNull(storage[i])) {
-                storage[i] = null;
-            } else {
-                break;
-            }
+        for (int i = 0; i < size; i++) {
+            storage[i] = null;
         }
+        size = 0;
     }
 
     void save(Resume r) {
-        for (int i = 0; i < storage.length; i++) {
-            if (Objects.isNull(storage[i])) {
-                storage[i] = r;
-                break;
-            }
-        }
+        storage[size] = r;
+        size++;
     }
 
     Resume get(String uuid) {
@@ -41,18 +35,23 @@ public class ArrayStorage {
         if (Objects.isNull(uuid)) {
             return;
         }
-        Resume[] newStorage = new Resume[10000];
-        int idx = 0;
-        for (Resume resume : storage) {
-            if (Objects.nonNull(resume) && !uuid.equals(resume.uuid)) {
-                newStorage[idx] = resume;
-                idx++;
-            }
-            if (Objects.isNull(resume)) {
+
+        int idx = -1;
+        for (int i = 0; i < size; i++) {
+            if (uuid.equals(storage[i].uuid)) {
+                idx = i;
                 break;
             }
         }
-        storage = newStorage;
+
+        if (idx == -1) {
+            return;
+        }
+
+        for (int i = idx; i < size; i++) {
+            storage[i] = storage[i + 1];
+        }
+        size--;
     }
 
     /**
@@ -61,27 +60,15 @@ public class ArrayStorage {
     Resume[] getAll() {
         int size = size();
         Resume[] newStorage = new Resume[size];
-        for (int i = 0; i < storage.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (Objects.nonNull(storage[i])) {
                 newStorage[i] = storage[i];
-            }
-            if (Objects.isNull(storage[i])) {
-                break;
             }
         }
         return newStorage;
     }
 
     int size() {
-        int size = 0;
-        for (Resume resume : storage) {
-            if (Objects.nonNull(resume)) {
-                size++;
-            }
-            if (Objects.isNull(resume)) {
-                break;
-            }
-        }
         return size;
     }
 }
