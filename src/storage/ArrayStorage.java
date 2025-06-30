@@ -13,8 +13,9 @@ public class ArrayStorage {
     private static final String UUID_EXIST_INFO = "Резюме с uuid - %s уже существует\n";
     private static final String STORAGE_IS_FULL = "Невозможно сохранить новое резюме, хранилище заполнено\n";
     private static final int OBJECT_NOT_EXIST = -1;
+    private static final int STORAGE_LIMIT = 10000;
 
-    private final Resume[] storage = new Resume[10000];
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
 
     public void clear() {
@@ -32,7 +33,7 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        if (size == storage.length) {
+        if (size == STORAGE_LIMIT) {
             System.out.println(STORAGE_IS_FULL);
             return;
         }
@@ -84,17 +85,15 @@ public class ArrayStorage {
     }
 
     private int findSearchKey(String uuid) {
-        int idx = OBJECT_NOT_EXIST;
         if (Objects.isNull(uuid)) {
-            return idx;
+            return OBJECT_NOT_EXIST;
         }
 
         for (int i = 0; i < size; i++) {
             if (uuid.equals(storage[i].getUuid())) {
-                idx = i;
-                break;
+                return i;
             }
         }
-        return idx;
+        return OBJECT_NOT_EXIST;
     }
 }
