@@ -1,12 +1,14 @@
-import model.Resume;
-import storage.ArrayStorage;
+package webapp;
+
+import webapp.model.Resume;
+import webapp.storage.ArrayStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Interactive test for storage.ArrayStorage implementation
+ * Interactive test for webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
