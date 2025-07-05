@@ -9,6 +9,7 @@ public abstract class AbstractArrayStorage implements Storage {
     protected static final String UUID_NOT_EXIST_INFO = "Резюме с uuid - %s не существует\n";
     protected static final String UUID_EXIST_INFO = "Резюме с uuid - %s уже существует\n";
     protected static final String STORAGE_IS_FULL = "Невозможно сохранить новое резюме, хранилище заполнено\n";
+
     protected static final int OBJECT_NOT_EXIST = -1;
     protected static final int STORAGE_LIMIT = 10000;
 

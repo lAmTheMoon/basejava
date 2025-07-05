@@ -17,9 +17,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void deleteFromStorage(int resumeIdx) {
-        for (int i = resumeIdx; i <= size; i++) {
+        for (int i = resumeIdx; i < size - 1; i++) {
             storage[i] = storage[i + 1];
         }
+        storage[size - 1] = null;
     }
 
     @Override
