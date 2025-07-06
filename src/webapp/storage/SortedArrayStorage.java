@@ -9,18 +9,13 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     protected void saveInStorage(Resume resume, int resumeIdx) {
         resumeIdx = -resumeIdx - 1;
-        for (int i = size; i > resumeIdx; i--) {
-            storage[i] = storage[i - 1];
-        }
+        System.arraycopy(storage, resumeIdx, storage, resumeIdx + 1, size - resumeIdx);
         storage[resumeIdx] = resume;
     }
 
     @Override
     protected void deleteFromStorage(int resumeIdx) {
-        for (int i = resumeIdx; i < size - 1; i++) {
-            storage[i] = storage[i + 1];
-        }
-        storage[size - 1] = null;
+        System.arraycopy(storage, resumeIdx + 1, storage, resumeIdx, size - resumeIdx);
     }
 
     @Override

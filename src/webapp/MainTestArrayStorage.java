@@ -36,6 +36,9 @@ public class MainTestArrayStorage {
         System.out.println("Size: " + storage.size());
         storage.save(r2);
         System.out.println("Size: " + storage.size());
+        System.out.println("Save null");
+        storage.save(null);
+        System.out.println("Size: " + storage.size());
 
         System.out.println("Get r1: " + storage.get(r1.getUuid()));
         System.out.println("Size: " + storage.size());
@@ -43,7 +46,11 @@ public class MainTestArrayStorage {
         System.out.println("Get dummy: " + storage.get("dummy"));
 
         printAll(storage);
+        System.out.println("Delete r3");
         storage.delete(r3.getUuid());
+        printAll(storage);
+        System.out.println("Delete r1");
+        storage.delete(r1.getUuid());
         printAll(storage);
         System.out.println("Size: " + storage.size());
 
@@ -51,6 +58,8 @@ public class MainTestArrayStorage {
         storage.delete("dummy");
         System.out.println("Size: " + storage.size());
 
+        System.out.println("Update null");
+        storage.update(null);
         System.out.println("Update new");
         Resume r4 = new Resume();
         r4.setUuid("uuid4");
@@ -61,6 +70,7 @@ public class MainTestArrayStorage {
         storage.save(r4);
         storage.update(r4);
         System.out.println("Size: " + storage.size());
+        printAll(storage);
 
         System.out.println("Clear");
         storage.clear();
