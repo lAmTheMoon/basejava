@@ -8,8 +8,6 @@ import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.lang.reflect.Field;
-
 
 abstract class AbstractArrayStorageTest {
     protected Storage storage;
@@ -37,10 +35,9 @@ abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    void save() throws NoSuchFieldException, IllegalAccessException {
-        Field storageLimit = storage.getClass().getSuperclass().getDeclaredField("STORAGE_LIMIT");
-        int maxSize = storageLimit.getInt(storage);
-        int freeSize = storageLimit.getInt(storage) - storage.size();
+    void save() {
+        int maxSize = AbstractArrayStorage.STORAGE_LIMIT;
+        int freeSize = maxSize - storage.size();
         try {
             for (int i = 0; i < freeSize; i++) {
                 storage.save(new Resume());
@@ -49,6 +46,7 @@ abstract class AbstractArrayStorageTest {
             Assertions.fail("Exception thrown before full storage");
         }
         Assertions.assertEquals(maxSize, storage.size());
+        Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume()));
     }
 
     @Test
@@ -59,16 +57,6 @@ abstract class AbstractArrayStorageTest {
     @Test
     void saveNullInStorage() {
         Assertions.assertThrows(StorageException.class, () -> storage.save(null));
-    }
-
-    @Test
-    void saveInFullStorage() throws NoSuchFieldException, IllegalAccessException {
-        Field storageLimit = storage.getClass().getSuperclass().getDeclaredField("STORAGE_LIMIT");
-        int maxSize = storageLimit.getInt(storage) - storage.size();
-        for (int i = 0; i < maxSize; i++) {
-            storage.save(new Resume());
-        }
-        Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume()));
     }
 
     @Test
