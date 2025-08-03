@@ -1,14 +1,16 @@
 package webapp.storage;
 
+import webapp.exception.ExistStorageException;
+import webapp.exception.NotExistStorageException;
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class AbstractArrayStorage implements Storage {
-    protected static final String UUID_NOT_EXIST_INFO = "Резюме с uuid - %s не существует\n";
-    protected static final String UUID_EXIST_INFO = "Резюме с uuid - %s уже существует\n";
-    protected static final String STORAGE_IS_FULL = "Невозможно сохранить новое резюме, хранилище заполнено\n";
+
+    private static final String STORAGE_IS_FULL = "Невозможно сохранить новое резюме, хранилище заполнено\n";
     private static final String RESUME_IS_NULL = "Resume is NULL";
 
     protected static final int OBJECT_NOT_EXIST = -1;
@@ -25,18 +27,17 @@ public abstract class AbstractArrayStorage implements Storage {
 
     @Override
     public final void save(Resume resume) {
-        if (size == STORAGE_LIMIT) {
-            System.out.println(STORAGE_IS_FULL);
-            return;
-        }
         if (Objects.isNull(resume)) {
-            System.out.println(RESUME_IS_NULL);
-            return;
+            throw new StorageException(RESUME_IS_NULL, null);
+        }
+
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException(STORAGE_IS_FULL, resume.getUuid());
         }
 
         int resumeIdx = getIndex(resume.getUuid());
         if (resumeIdx > OBJECT_NOT_EXIST) {
-            System.out.printf(UUID_EXIST_INFO, resume.getUuid());
+            throw new ExistStorageException(resume.getUuid());
         } else {
             saveInStorage(resume, resumeIdx);
             size++;
@@ -51,21 +52,19 @@ public abstract class AbstractArrayStorage implements Storage {
         if (resumeIdx > OBJECT_NOT_EXIST) {
             return storage[resumeIdx];
         }
-        System.out.printf(UUID_NOT_EXIST_INFO, uuid);
-        return null;
+        throw new NotExistStorageException(uuid);
     }
 
     @Override
     public final void update(Resume resume) {
         if (Objects.isNull(resume)) {
-            System.out.println(RESUME_IS_NULL);
-            return;
+            throw new StorageException(RESUME_IS_NULL, null);
         }
         int resumeIdx = getIndex(resume.getUuid());
         if (resumeIdx > OBJECT_NOT_EXIST) {
             storage[resumeIdx] = resume;
         } else {
-            System.out.printf(UUID_NOT_EXIST_INFO, resume.getUuid());
+            throw new NotExistStorageException(resume.getUuid());
         }
     }
 
@@ -76,7 +75,7 @@ public abstract class AbstractArrayStorage implements Storage {
             deleteFromStorage(resumeIdx);
             size--;
         } else {
-            System.out.printf(UUID_NOT_EXIST_INFO, uuid);
+            throw new NotExistStorageException(uuid);
         }
     }
 

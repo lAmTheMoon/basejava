@@ -19,14 +19,10 @@ public class MainTestArrayStorage {
 
     private static void checkStorage(Storage storage) {
         System.out.println("Size: " + storage.size());
-        Resume r1 = new Resume();
-        r1.setUuid("uuid1");
-        Resume r5 = new Resume();
-        r5.setUuid("uuid5");
-        Resume r3 = new Resume();
-        r3.setUuid("uuid3");
-        Resume r2 = new Resume();
-        r2.setUuid("uuid2");
+        Resume r1 = new Resume("uuid1");
+        Resume r5 = new Resume("uuid5");
+        Resume r3 = new Resume("uuid3");
+        Resume r2 = new Resume("uuid2");
 
         storage.save(r1);
         System.out.println("Size: " + storage.size());
@@ -61,8 +57,7 @@ public class MainTestArrayStorage {
         System.out.println("Update null");
         storage.update(null);
         System.out.println("Update new");
-        Resume r4 = new Resume();
-        r4.setUuid("uuid4");
+        Resume r4 = new Resume("uuid4");
         storage.update(r4);
         System.out.println("Size: " + storage.size());
 
