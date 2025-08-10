@@ -10,12 +10,18 @@ import webapp.model.Resume;
 
 
 abstract class AbstractArrayStorageTest {
-    protected Storage storage;
+    protected final Storage storage;
 
     protected static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
     protected static final String UUID_3 = "uuid3";
     protected static final String UUID_4 = "uuid4";
+
+    protected static final Resume RESUME_1 = new Resume(UUID_1);
+    protected static final Resume RESUME_2 = new Resume(UUID_2);
+    protected static final Resume RESUME_3 = new Resume(UUID_3);
+    protected static final Resume RESUME_4 = new Resume(UUID_4);
+    protected static final Resume[] EXPECTED = {RESUME_4, RESUME_2, RESUME_3};
 
     public AbstractArrayStorageTest(Storage storage) {
         this.storage = storage;
@@ -23,15 +29,15 @@ abstract class AbstractArrayStorageTest {
 
     @BeforeEach
     public void setUp() {
-        storage.save(new Resume(UUID_4));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
+        storage.save(RESUME_4);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
     void clear() {
         storage.clear();
-        Assertions.assertEquals(0, storage.size());
+        assertSize(0);
     }
 
     @Test
@@ -45,13 +51,13 @@ abstract class AbstractArrayStorageTest {
         } catch (Exception e) {
             Assertions.fail("Exception thrown before full storage");
         }
-        Assertions.assertEquals(maxSize, storage.size());
+        assertSize(maxSize);
         Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume()));
     }
 
     @Test
     void saveExistResumeInStorage() {
-        Assertions.assertThrows(ExistStorageException.class, () -> storage.save(new Resume(UUID_3)));
+        Assertions.assertThrows(ExistStorageException.class, () -> storage.save(RESUME_3));
     }
 
     @Test
@@ -61,9 +67,8 @@ abstract class AbstractArrayStorageTest {
 
     @Test
     void get() {
-        Resume resume = new Resume(UUID_1);
-        storage.save(resume);
-        Assertions.assertEquals(resume, storage.get(UUID_1));
+        storage.save(RESUME_1);
+        assertGet(RESUME_1);
     }
 
     @Test
@@ -73,10 +78,9 @@ abstract class AbstractArrayStorageTest {
 
     @Test
     void update() {
-        Resume resume = new Resume(UUID_3);
-        storage.update(resume);
-        Assertions.assertEquals(3, storage.size());
-        Assertions.assertEquals(resume, storage.get(UUID_3));
+        storage.update(RESUME_3);
+        assertSize(3);
+        Assertions.assertSame(RESUME_3, storage.get(UUID_3));
     }
 
     @Test
@@ -86,13 +90,13 @@ abstract class AbstractArrayStorageTest {
 
     @Test
     void updateNotExistResume() {
-        Assertions.assertThrows(NotExistStorageException.class, () -> storage.update(new Resume(UUID_1)));
+        Assertions.assertThrows(NotExistStorageException.class, () -> storage.update(RESUME_1));
     }
 
     @Test
     void delete() {
         storage.delete(UUID_3);
-        Assertions.assertEquals(2, storage.size());
+        assertSize(2);
         Assertions.assertThrows(NotExistStorageException.class, () -> storage.get(UUID_3));
     }
 
@@ -103,20 +107,28 @@ abstract class AbstractArrayStorageTest {
 
     @Test
     void getAll() {
-        Assertions.assertEquals(3, storage.size());
-        Assertions.assertEquals(3, storage.getAll().length);
+        assertSize(3);
+        Assertions.assertArrayEquals(EXPECTED, storage.getAll());
     }
-
     @Test
     void size() {
-        Assertions.assertEquals(3, storage.size());
-        storage.save(new Resume(UUID_1));
-        Assertions.assertEquals(4, storage.size());
-        storage.update(new Resume(UUID_1));
-        Assertions.assertEquals(4, storage.size());
+        assertSize(3);
+        storage.save(RESUME_1);
+        assertSize(4);
+        storage.update(RESUME_1);
+        assertSize(4);
         storage.delete(UUID_1);
-        Assertions.assertEquals(3, storage.size());
+        assertSize(3);
         storage.clear();
-        Assertions.assertEquals(0, storage.size());
+        assertSize(0);
+        Assertions.assertArrayEquals(new Resume[0], storage.getAll());
+    }
+
+    protected void assertSize(int maxSize) {
+        Assertions.assertEquals(maxSize, storage.size());
+    }
+
+    protected void assertGet(Resume resume) {
+        Assertions.assertEquals(resume, storage.get(resume.getUuid()));
     }
 }
